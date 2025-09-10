@@ -1,0 +1,187 @@
+﻿@model IssueViewModel
+
+<style>
+    body {
+        background-color: #1a1f2b;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container-full {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card-dark {
+        background-color: #2b3245;
+        color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        padding: 2rem;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .form-control, select, textarea {
+        background-color: #3a3f4b !important;
+        color: #fff !important;
+        border: 1px solid #555;
+        border-radius: 6px;
+    }
+
+        .form-control:focus, select:focus, textarea:focus {
+            background-color: #3a3f4b !important;
+            color: #fff !important;
+            border-color: #0d6efd;
+            box-shadow: none;
+        }
+
+        .form-control.is-invalid, select.is-invalid, textarea.is-invalid {
+            border-color: #dc3545 !important;
+            background-color: #3a3f4b !important;
+            color: #fff !important;
+        }
+
+    label {
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+        border-radius: 6px;
+    }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+
+    .progress {
+        height: 20px;
+        border-radius: 6px;
+        background-color: #3a3f4b;
+    }
+
+    .progress-bar {
+        font-weight: bold;
+        background-color: #0d6efd;
+    }
+</style>
+
+<div class="intro-text" style="text-align: center; margin-top: 20px;">
+    <h2>Report an Issue</h2>
+    <p>
+        Your voice, our action, together for a better community
+    </p>
+</div>
+
+<div class="container-full">
+    <div class="card-dark">
+        <h2 class="text-center mb-4">Report an Issue</h2>
+
+        
+        <div class="progress mb-3">
+            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+        </div>
+
+        
+        <form id="issueForm" enctype="multipart/form-data">
+            <div class="form-group mb-3">
+                <label>Location</label>
+                <input asp-for="Location" class="form-control" id="location" name="Location" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Category</label>
+                <select asp-for="Category" class="form-control" id="category" name="Category">
+                    <option value="">-- Select --</option>
+                    <option>Potholes</option>
+                    <option>Water outage</option>
+                    <option>Burst water pipes/leaks</option>
+                    <option>Electricity outage</option>
+                    <option>Cable theft</option>
+                    <option>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Description</label>
+                <textarea asp-for="Description" class="form-control" id="description" name="Description" rows="4"></textarea>
+            </div>
+
+            <div class="form-group mb-4">
+                <label>Upload File</label>
+                <input type="file" class="form-control" id="fileUpload" name="Attachment" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const fields = ["location", "category", "description", "fileUpload"];
+    const progressBar = document.getElementById("progressBar");
+
+    fields.forEach(id => {
+        document.getElementById(id).addEventListener("input", updateProgress);
+        document.getElementById(id).addEventListener("change", updateProgress);
+    });
+
+    function updateProgress() {
+        let filled = 0;
+        fields.forEach(id => {
+            const field = document.getElementById(id);
+            if (field.value || (field.type === "file" && field.files.length > 0)) {
+                filled++;
+            }
+        });
+        let percent = Math.round((filled / fields.length) * 100);
+        progressBar.style.width = percent + "%";
+        progressBar.textContent = percent + "%";
+    }
+
+    document.getElementById("issueForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        
+        let valid = true;
+        fields.forEach(id => {
+            const field = document.getElementById(id);
+            if (!field.value && !(field.type === "file" && field.files.length > 0)) {
+                field.classList.add("is-invalid");
+                valid = false;
+            } else {
+                field.classList.remove("is-invalid");
+            }
+        });
+
+        if (!valid) {
+            alert("⚠️ Failed to log report. Please fill in all required fields.");
+            return;
+        }
+
+        const formData = new FormData(this);
+
+        const response = await fetch('@Url.Action("ReportIssue", "Issues")', {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json();
+        console.log(result);
+
+        if (result.success) {
+            alert(" Report logged successfully!");
+            window.location.href = "/Home/Index";
+        } else {
+            alert(" Failed to log report. " + (result.errors ? result.errors.join(", ") : ""));
+        }
+    });
+</script>
+

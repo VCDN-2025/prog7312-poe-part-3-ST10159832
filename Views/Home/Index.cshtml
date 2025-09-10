@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Home page";
+}
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #1a1f2b; 
+    }
+
+    .hero-section {
+        position: relative;
+        width: 100%;
+        height: 50vh;
+        overflow: hidden;
+    }
+
+        .hero-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .intro-text {
+        background-color: #1a1f2b;
+        color: #fff;
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+</style>
+
+<!--https://www.thehotelguru.com/_images/e1/4d/e14d9c6553de93fca83c156437f63421/s1180x560.jpg imagw from this link -->
+<div class="hero-section">
+    <img src="~/images/head_imageone.jpg" alt="Main Menu Banner">
+</div>
+
+
+<div class="intro-text">
+    <h2>Welcome to the Municipality Website</h2>
+    <p>
+        Welcome to the Municipality website. This platform is created to strengthen communication and collaboration between the municipality and the community.
+        It enables residents to easily report issues such as service disruptions or infrastructure problems, ensuring they are recorded and resolved effectively.
+        The site also provides access to information on local events to keep the community updated and engaged, along with a service requests section where users
+        can monitor and interact with municipal services. Overall, the system enhances efficiency, transparency, and citizen participation in municipal operations.
+    </p>
+</div>
+
+
+<div class="container-fluid py-5" style="background-color: #1a1f2b;">
+    <div class="row justify-content-center m-0">
+        <div class="col-md-8">
+            
+            <div class="card shadow-lg border-0 rounded-4" style="background-color: #2b3245; color: #fff;">
+                <!-- https://mg.co.za/wp-content/uploads/2022/11/3a345fab-police_delwynverasamy_-scaled-1.jpg  image from this link -->
+                <img src="~/images/body_image.jpg"
+                     class="card-img-top rounded-top-4"
+                     alt="Menu Image"
+                     style="height: 300px; object-fit: cover;"> 
+
+                <div class="card-body text-center p-4">
+                    <h3 class="card-title mb-3">Main Menu</h3>
+                    <p class="card-text text-light">
+                        Select one of the options below to report an issue, view local events and make service requests.
+                    </p>
+
+                    
+                    <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+                        <a asp-controller="Issues" asp-action="ReportIssue"
+                           class="btn btn-primary px-4 py-2 rounded-3">Report Issue</a>
+                        <a asp-controller="Issues" asp-action="LocalEvents"
+                           class="btn btn-outline-light px-4 py-2 rounded-3">Local Events</a>
+                        <a asp-controller="Issues" asp-action="ServiceRequest"
+                           class="btn btn-secondary px-4 py-2 rounded-3">Service Request</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid py-5" style="background-color: #1a1f2b;">
+    <div class="row justify-content-center m-0">
+        <div class="col-md-11">
+            <div class="card shadow-lg border-0 rounded-4" style="background-color: #3a3f4b; color: #fff; position: relative;">
+
+                <div class="card-body d-flex flex-column flex-md-row align-items-center justify-content-center text-center gap-4">
+
+                  
+                    <div style="max-width: 400px; width: 100%;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3460.195603218208!2d31.02143627554667!3d-29.8586322750177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ef6fc7185f75763%3A0x109b5db065f855dc!2sEthekwini%20Municipality%20Durban!5e0!3m2!1sen!2sza!4v1757521494259!5m2!1sen!2sza"
+                                width="100%" height="200"
+                                style="border:0; border-radius: 0.5rem;"
+                                allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+
+                   
+                    <div>
+                        <h3 class="card-title mb-3">Contact Us</h3>
+                        <p class="card-text text-light mb-1"> 263 West St, Durban Central, Durban, 3646</p>
+                        <p class="card-text text-light mb-1"> 0317673908</p>
+                        <p class="card-text text-light"> info@goverment.co.za</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
