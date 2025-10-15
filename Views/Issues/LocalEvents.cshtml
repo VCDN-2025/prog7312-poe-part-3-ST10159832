@@ -1,82 +1,155 @@
-﻿@{
-    ViewData["Title"] = "Local Events"; 
+﻿@model IEnumerable<ST10159832KeenanPROGpart1.Models.LocalEvent>
+@{
+    ViewData["Title"] = "Local Events and Announcements";
+
+    var categories = ViewBag.Categories as HashSet<string>;
+    var recommendations = ViewBag.Recommendations as List<ST10159832KeenanPROGpart1.Models.LocalEvent>;
+    var urgent = ViewBag.Urgent as List<ST10159832KeenanPROGpart1.Models.LocalEvent>;
+    var recentSearches = ViewBag.RecentSearches as List<string>;
+
+   
+    string currentQuery = Context.Request.Query["q"];
+    string currentCategory = Context.Request.Query["category"];
+    string currentDate = Context.Request.Query["date"];
 }
 
 <style>
-    body {
-        background-color: #1a1f2b;
-        color: #fff;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-
-    .container-full {
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .card-dark {
-        background-color: #2b3245;
-        color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        padding: 3rem;
-        text-align: center;
-        width: 100%;
-        max-width: 600px;
-    }
-
-    h2 {
-        margin-bottom: 1rem;
-    }
-
-    p {
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-    }
-
-    .btn {
-        margin: 0 0.5rem;
-        border-radius: 6px;
-        padding: 0.5rem 1.5rem;
-        font-weight: 500;
-    }
-
-    .btn-primary {
-        background-color: #0d6efd;
-        border: none;
-        color: #fff;
-    }
-
-        .btn-primary:hover {
-            background-color: #0b5ed7;
-        }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        border: none;
-        color: #fff;
-    }
-
-        .btn-secondary:hover {
-            background-color: #5c636a;
-        }
+    body { background-color: #1a1f2b; color: #fff; font-family: Arial, sans-serif; }
+    .card-dark { background-color: #2b3245; color: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+    .event-item { border-bottom: 1px solid #3b4156; padding: 0.9rem 0; }
+    .recommendation-card { background-color: #3a3f4b; padding: 1rem; border-radius: 8px; }
+    .urgent-badge { background-color: #d9534f; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem; }
+    .small-muted { color: #cfcfd6; font-size: 0.9rem; }
+    .search-row { gap: .5rem; margin-bottom: 1rem; }
 </style>
 
-<div class="container-full">
+<div class="container py-4">
     <div class="card-dark">
-        <h2>Local Events</h2> 
-        <p>Coming Soon!! </p>
+        <h2>Local Events & Announcements</h2>
 
-        
-        <div>
-            <a asp-controller="Issues" asp-action="ReportIssue" class="btn btn-primary">Report Issue</a>
-            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Main Menu</a>
+        <form method="get" class="mb-3">
+            <div class="row search-row">
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="q"
+                           placeholder="Search by title, description or keyword"
+                           value="@currentQuery" />
+                </div>
+
+                <div class="col-md-3">
+                    <select class="form-control" name="category">
+                        <option value="">All Categories</option>
+                        @if (categories != null)
+                        {
+                            foreach (var c in categories.OrderBy(x => x))
+                            {
+                                var isSelected = currentCategory == c ? "selected" : "";
+                                <option value="@c" selected="@(currentCategory == c ? "selected" : null)">@c</option>
+
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <input type="date" class="form-control" name="date"
+                           value="@currentDate" />
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-md-8">
+                <h4>Events</h4>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var ev in Model.OrderBy(e => e.Date))
+                    {
+                        <div class="event-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5>@ev.Title</h5>
+                                    <div class="small-muted">@ev.Category &middot; @ev.Date.ToString("yyyy-MM-dd")</div>
+                                </div>
+                                <div>
+                                    @if (ev.Priority <= 2)
+                                    {
+                                        <span class="urgent-badge">URGENT</span>
+                                    }
+                                </div>
+                            </div>
+                            <p>@ev.Description</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No events found.</p>
+                }
+            </div>
+
+            <div class="col-md-4">
+                <div class="mb-3 recommendation-card">
+                    <h5>Recommended for you</h5>
+                    @if (recommendations != null && recommendations.Any())
+                    {
+                        <ul>
+                            @foreach (var r in recommendations)
+                            {
+                                <li>@r.Title - @r.Category (@r.Date.ToString("yyyy-MM-dd"))</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="small-muted">No recommendations yet — try searching or selecting categories.</p>
+                    }
+                </div>
+
+                <div class="mb-3 recommendation-card">
+                    <h5>Urgent / Priority Notices</h5>
+                    @if (urgent != null && urgent.Any())
+                    {
+                        <ul>
+                            @foreach (var u in urgent)
+                            {
+                                <li><strong>@u.Title</strong> (@u.Date.ToString("yyyy-MM-dd")) - @u.Category</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="small-muted">No urgent notices.</p>
+                    }
+                </div>
+
+                <div class="recommendation-card">
+                    <h5>Recent Searches</h5>
+                    @if (recentSearches != null && recentSearches.Any())
+                    {
+                        <ol>
+                            @foreach (var s in recentSearches)
+                            {
+                                <li>@s</li>
+                            }
+                        </ol>
+                    }
+                    else
+                    {
+                        <p class="small-muted">No recent searches yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to Main Menu</a>
         </div>
     </div>
 </div>
+
 
 
