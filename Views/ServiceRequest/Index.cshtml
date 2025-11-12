@@ -1,0 +1,294 @@
+﻿@model IEnumerable<ST10159832KeenanPROGpart1.Models.ServiceRequest>
+
+@{
+    ViewData["Title"] = "Service Requests";
+    var sortBy = ViewBag.SortBy as string;
+}
+
+<style>
+    /* ====== Dark Theme (matches your Report Issue page) ====== */
+    body {
+        background-color: #1a1f2b;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container-full {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 2rem 1rem;
+    }
+
+    .card-dark {
+        background-color: #2b3245;
+        color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        padding: 2rem;
+        width: 100%;
+        max-width: 1200px;
+    }
+
+    .intro-text {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .form-control, select, textarea, .form-select {
+        background-color: #3a3f4b !important;
+        color: #fff !important;
+        border: 1px solid #555;
+        border-radius: 6px;
+    }
+
+        .form-control:focus, select:focus, textarea:focus, .form-select:focus {
+            background-color: #3a3f4b !important;
+            color: #fff !important;
+            border-color: #0d6efd;
+            box-shadow: none;
+        }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+        border-radius: 6px;
+    }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+
+    .btn-outline-primary, .btn-outline-secondary, .btn-outline-info {
+        border-radius: 6px;
+        color: #fff;
+        border-color: #6c757d;
+    }
+
+        .btn-outline-primary:hover,
+        .btn-outline-secondary:hover,
+        .btn-outline-info:hover {
+            color: #fff;
+            border-color: #0d6efd;
+            background-color: rgba(13,110,253,0.2);
+        }
+
+    /* Alerts in dark */
+    .alert-success {
+        background-color: rgba(25,135,84,0.2);
+        color: #a8f0c8;
+        border: 1px solid rgba(25,135,84,0.4);
+        border-radius: 8px;
+    }
+
+    /* Table styling */
+    .table-wrap {
+        overflow-x: auto;
+        border-radius: 10px;
+        border: 1px solid #3b4156;
+    }
+
+    table.table-darklike {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        color: #e9ecef;
+    }
+
+    .table-darklike thead {
+        background-color: #31384d;
+    }
+
+        .table-darklike thead th {
+            border-bottom: 1px solid #3b4156;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+    .table-darklike tbody tr {
+        background-color: #2f3548;
+        border-bottom: 1px solid #3b4156;
+    }
+
+    .table-darklike td {
+        padding: 0.8rem;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Highlight parent rows */
+    .row-parent {
+        background-color: #3a3f4b !important;
+    }
+
+    /* Badges */
+    .badge {
+        font-size: 0.9em;
+        border-radius: 0.5rem;
+    }
+
+        .badge.bg-info {
+            background-color: #6bc1ff !important;
+            color: #122;
+        }
+
+        .badge.bg-secondary {
+            background-color: #6c757d !important;
+        }
+
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+
+        .badge.bg-dark {
+            background-color: #212529 !important;
+        }
+
+        .badge.bg-success {
+            background-color: #198754 !important;
+        }
+
+    /* Section separators */
+    .section-title {
+        font-weight: 600;
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
+    }
+
+    /* Button sizing in table */
+    .btn-sm {
+        padding: 0.25rem 0.6rem;
+    }
+
+    /* Sort buttons group */
+    .sort-group a {
+        min-width: 140px;
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<div class="intro-text">
+    <h2>Municipal Service Requests</h2>
+    <p>Track, sort and manage municipal issues in one place.</p>
+</div>
+
+<div class="container-full">
+    <div class="card-dark">
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success text-center mb-3">
+                @TempData["Message"]
+            </div>
+        }
+
+        <!-- Track by ID -->
+        <div class="mb-3">
+            <div class="section-title">Track a Request</div>
+            <form asp-action="Track" method="get" class="d-flex flex-wrap justify-content-center gap-2">
+                <input type="text" name="id" class="form-control" style="max-width: 320px;"
+                       placeholder="Enter Request ID (e.g., R101)" required />
+                <button type="submit" class="btn btn-primary">Track</button>
+            </form>
+        </div>
+
+        <!-- Sorting Buttons -->
+        <div class="mb-3">
+            <div class="section-title">Sort Requests</div>
+            <div class="d-flex flex-wrap justify-content-center gap-2 sort-group">
+                <a class="btn btn-outline-primary @(sortBy == null ? "active" : "")"
+                   asp-action="Index" asp-route-sortBy="">Sort by ID</a>
+
+                <a class="btn btn-outline-primary @(sortBy == "created" ? "active" : "")"
+                   asp-action="Index" asp-route-sortBy="created">Sort by Date</a>
+
+                <a class="btn btn-outline-primary @(sortBy == "priority" ? "active" : "")"
+                   asp-action="Index" asp-route-sortBy="priority">Sort by Priority</a>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrap">
+            <table class="table-darklike">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Location</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>ETA</th>
+                        <th>Parent Issue</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        bool isParent = string.IsNullOrEmpty(item.ParentId);
+                        <tr class="@(isParent ? "row-parent" : "")">
+                            <td>@item.Id</td>
+                            <td>@item.Title</td>
+                            <td>@item.Category</td>
+                            <td>@item.Location</td>
+                            <td><span class="badge bg-info text-dark">@item.Priority</span></td>
+
+                            <!-- STATUS BADGE -->
+                            <td>
+                                @if (item.Status == ST10159832KeenanPROGpart1.Models.RequestStatus.Closed)
+                                {
+                                    <span class="badge bg-dark">Closed</span>
+                                }
+                                else if (item.Status == ST10159832KeenanPROGpart1.Models.RequestStatus.InProgress)
+                                {
+                                    <span class="badge bg-warning text-dark">In Progress</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Open</span>
+                                }
+                            </td>
+
+                            <td>@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>@item.EtaUtc.ToString("HH:mm")</td>
+                            <td>@(item.ParentId ?? "-")</td>
+
+                            <!-- ACTION BUTTON -->
+                            <td>
+                                @if (item.Status == ST10159832KeenanPROGpart1.Models.RequestStatus.Closed)
+                                {
+                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-info">View</a>
+                                }
+                                else
+                                {
+                                    <form asp-action="UpdateStatus" method="post" asp-route-id="@item.Id" class="m-0">
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            @(item.Status == ST10159832KeenanPROGpart1.Models.RequestStatus.Open
+                                                ? "Start Progress"
+                                                : "Mark Closed")
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <a class="btn btn-outline-secondary" asp-action="GraphTools" asp-route-type="mst">
+                View Location Network 
+            </a>
+        </div>
+    </div>
+</div>
+
+

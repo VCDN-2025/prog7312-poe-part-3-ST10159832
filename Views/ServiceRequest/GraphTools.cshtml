@@ -1,0 +1,157 @@
+﻿@{
+    ViewData["Title"] = "Graph Tools";
+    var output = ViewBag.Output as string;
+    var type = ViewBag.Type as string;
+    var location = ViewBag.Location as string;
+}
+
+<style>
+    /* ====== Dark UI Consistency ====== */
+    body {
+        background-color: #1a1f2b;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container-full {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 2rem 1rem;
+    }
+
+    .card-dark {
+        background-color: #2b3245;
+        color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        padding: 2rem;
+        width: 100%;
+        max-width: 1000px;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        font-weight: 500;
+        color: #cfd3e0;
+    }
+
+    .form-control, .form-select {
+        background-color: #3a3f4b !important;
+        color: #fff !important;
+        border: 1px solid #555;
+        border-radius: 6px;
+    }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #3a3f4b !important;
+            border-color: #0d6efd;
+            box-shadow: none;
+        }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+
+    .btn-outline-secondary {
+        border-radius: 6px;
+        color: #fff;
+        border-color: #6c757d;
+        transition: all 0.3s;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: rgba(13,110,253,0.2);
+            border-color: #0d6efd;
+            color: #fff;
+        }
+
+    .output-card {
+        background-color: #2b3245;
+        color: #fff;
+        border-radius: 10px;
+        border: 1px solid #3b4156;
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    pre {
+        background-color: #3a3f4b;
+        color: #fff;
+        font-size: 1rem;
+        border-radius: 6px;
+        padding: 1rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        border: 1px solid #555;
+    }
+
+    .text-muted em {
+        color: #cfcfd6;
+    }
+</style>
+
+<div class="container-full">
+    <div class="card-dark">
+        <h2>Graph Tools – Route & Network Analysis</h2>
+
+        <!-- Graph Tool Selection -->
+        <form method="get" asp-action="GraphTools" class="card-dark mb-4 p-4" style="box-shadow: none;">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Select Graph Operation:</label>
+                    <select class="form-select" name="type">
+                        <option value="bfs" selected="@(type == "bfs")">Breadth-First Search </option>
+                        <option value="dfs" selected="@(type == "dfs")">Depth-First Search </option>
+                        <option value="mst" selected="@(type == "mst")">Minimum Spanning Tree </option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Starting Location (for BFS/DFS):</label>
+                    <input type="text" class="form-control" name="location"
+                           placeholder="e.g. Durban North" value="@location" />
+                </div>
+
+                <div class="col-md-4 text-end">
+                    <button type="submit" class="btn btn-primary w-100">Run</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Output Section -->
+        <div class="output-card">
+            <h5>Results:</h5>
+            @if (!string.IsNullOrEmpty(output))
+            {
+                <pre>@output</pre>
+            }
+            else
+            {
+                <p class="text-muted"><em>No graph operation has been run yet.</em></p>
+            }
+        </div>
+
+        <div class="text-center mt-4">
+            <a asp-controller="ServiceRequest" asp-action="Index" class="btn btn-outline-secondary">
+                ← Back to Requests
+            </a>
+        </div>
+    </div>
+</div>
+
+
